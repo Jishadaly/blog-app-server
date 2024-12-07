@@ -11,5 +11,6 @@ const interactor = new AthInteractorImpl(repository);
 const controller = new AuthController(interactor)
 
 authRouter.post('/register',controller.register.bind(controller));
+authRouter.post('/verifyOTP' , controller.verifyOtp);
 
 export default authRouter;
