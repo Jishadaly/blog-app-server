@@ -41,7 +41,6 @@ export class AthInteractorImpl implements AuthInterface {
 
     async verifyUser( data: { otp: string, email: string }): Promise<any> {
         
-        
         try {
             const otpRecord = await this.Repository.getStoredOtp(data.email)
         
@@ -65,7 +64,7 @@ export class AthInteractorImpl implements AuthInterface {
             throw error
         }
     }
-
+     
      async loginUser (email: string, password: string) : Promise<any> {
         try {
             const existingUser = await this.Repository.getUserbyEMail(email);

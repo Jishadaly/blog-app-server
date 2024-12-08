@@ -63,7 +63,7 @@ export const generateOtpEmailContent = (name: string, otp: string) => {
       </head>
       <body>
         <div class="email-container">
-          <div class="header">Verify Your Email Address</div>
+          <div class="header">Verify Your Email Address with Aura-blog</div>
           <div class="content">
             <p>Hi ${name},</p>
             <p>Thank you for registering with Aura-blog. To complete your registration, please use the OTP below:</p>

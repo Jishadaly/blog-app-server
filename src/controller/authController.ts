@@ -5,6 +5,8 @@ export class AuthController {
     constructor(private readonly interactor: AuthInterface) { }
 
     async register(req: Request, res: Response, next: NextFunction) {
+        console.log(this.interactor);
+        
         try {
             const { name, email } = req.body;
             console.log(req.body);
