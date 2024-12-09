@@ -12,13 +12,16 @@ const repository = new AuthRepositoryImpl();
 const interactor = new AthInteractorImpl(repository);
 const controller = new AuthController(interactor)
 
-authRouter.post('/register',controller.register.bind(controller));
-authRouter.post('/verifyOTP' , controller.verifyOtp.bind(controller));
-authRouter.post('/login',controller.userLogin.bind(controller));
-authRouter.get('/resendOtp',controller.resendOtp.bind(controller));
-authRouter.post('/googleLogin',controller.googleAuth.bind(controller))
+authRouter.post('/register', controller.register.bind(controller));
+authRouter.post('/verifyOTP', controller.verifyOtp.bind(controller));
+authRouter.post('/login', controller.userLogin.bind(controller));
+authRouter.get('/resendOtp', controller.resendOtp.bind(controller));
+authRouter.post('/googleLogin', controller.googleAuth.bind(controller))
 
-authRouter.post('/createBlog', protect, parser.single("image"),controller.createBlog.bind(controller));
-authRouter.get('/getBlogs',protect,controller.getBlogs.bind(controller));
+authRouter.post('/createBlog', protect, parser.single("image"), controller.createBlog.bind(controller));
+authRouter.get('/getBlogs', protect, controller.getBlogs.bind(controller));
+authRouter.get('/getBlogDetails', protect, controller.getBlogDetails.bind(controller))
+authRouter.put('/updateBlog', protect, parser.single("image"), controller.updateBlog.bind(controller));
+authRouter.delete('/deleteBlog',protect,controller.deleteBlog.bind(controller));
 
 export default authRouter;

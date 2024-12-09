@@ -10,4 +10,7 @@ export interface AuthInterface {
     googleAuth(userData: IUser): Promise<any>
     createBlog(blogData: IBlogBody): Promise<any>
     getBlogs(): Promise<IBlog[] | null>
+    getBlogDetails(blogId: string): Promise<IBlog | null>
+    editBlog(blogId: string , blogData:IBlogBody): Promise<IBlog | null>
+    deleteBlog(blogId:string , userId:string):Promise<boolean | null>
 }

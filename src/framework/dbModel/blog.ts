@@ -3,16 +3,24 @@ import mongoose, { model, Schema } from "mongoose";
 export interface IBlog extends Document {
     title: string;
     content?: string;
-    author?: mongoose.Types.ObjectId;
+    author?: mongoose.Types.ObjectId |  {
+        userName: string;
+        email: string;
+      },
     tags?: string[];
     likes?: number;
     isPublished?: boolean;
     imageUrl?:string;
+    brief:string
 }
 
 const blogSchema = new Schema<IBlog>(
     {
         title: {
+            type: String,
+            required: true,
+        },
+        brief :{
             type: String,
             required: true,
         },

@@ -144,6 +144,8 @@ export class AthInteractorImpl implements AuthInterface {
 
     async createBlog(blogData: IBlog): Promise<IBlog> {
         try {
+
+            
             
             if (!blogData.title?.trim()) {
                 throw new Error('Blog title is required');
@@ -206,7 +208,72 @@ export class AthInteractorImpl implements AuthInterface {
         try {
             return await this.Repository.getStoredBlogs();
         } catch (error) {
+            throw new Error('Blogs fetching failed: Unknown error');
+        }
+    }
+
+    async getBlogDetails(blogId: string): Promise<IBlogDb | null> {
+        try {
+            return await this.Repository.getBlogById(blogId);
+        } catch (error) {
             throw new Error('Blog fetching failed: Unknown error');
+        }
+    }
+
+    async editBlog(blogId: string , blogData:IBlog): Promise<IBlogDb | null> {
+        try {
+
+            if (!blogData.title?.trim()) {
+                throw new Error('Blog title is required');
+            }
+            if (!blogData.brief?.trim()) {
+                throw new Error('Blog brief is required');
+            }
+            if (!blogData.content?.trim()) {
+                throw new Error('Blog content is required');
+            }
+            if (!blogId) {
+                throw new Error('User ID is required');
+            }
+
+           
+            if (blogData.title.length < 5 || blogData.title.length > 100) {
+                throw new Error('Blog title must be between 5 and 100 characters');
+            }
+            if (blogData.brief.length < 10 || blogData.brief.length > 200) {
+                throw new Error('Blog brief must be between 10 and 200 characters');
+            }
+            if (blogData.content.length < 100) {
+                throw new Error('Blog content must be at least 100 characters');
+            }
+
+            const sanitizedBlog: IBlog = {
+                title: blogData.title.trim(),
+                brief: blogData.brief.trim(),
+                content: blogData.content.trim(),
+                image: blogData.image,
+                tags: ["technology", "programming"],
+            };
+
+            console.log(sanitizedBlog)
+
+            return this.Repository.updateBlogById(blogId , blogData);
+        } catch (error) {
+            console.log(error);
+            throw new Error('error updating blog');
+        }
+    }
+
+    async deleteBlog(blogId: string, userId: string): Promise<boolean | null> {
+        try {   
+                const isUserOwnBlog = this.Repository.getBlogById(blogId)
+                if (!isUserOwnBlog) {
+                    throw new Error('user verification error: The user is not the real auther of this blog.')
+                }
+                return await this.Repository.deleteBlogById(blogId);
+        } catch (error) {
+            console.log(error);
+            throw new Error('error deleting blog');
         }
     }
   

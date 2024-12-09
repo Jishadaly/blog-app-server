@@ -122,13 +122,13 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
                 throw new Error('Missing required fields: title, content, or author');
             }
 
-
             const sanitizedBlog: IBlogBody = {
                 title: this.sanitizeText(blogData.title),
                 content: this.sanitizeText(blogData.content),
                 author: blogData.userId,
+                brief: blogData.brief,
                 tags: blogData.tags?.map(tag => this.sanitizeText(tag)),
-                imageUrl: blogData.imageUrl,
+                imageUrl: blogData.image,
                 isPublished: blogData.isPublished ?? false
             };
 
@@ -158,7 +158,47 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
     }
 
     async getStoredBlogs(): Promise<IBlog[] | null> {
-        return await Blogs.find().sort({ createdAt: -1 });
+        return await Blogs.find().sort({ createdAt: -1 }).populate('author', 'userName email');
     }
+
+    async getBlogById(blogId: string): Promise<IBlog | null> {
+        return await Blogs.findById(blogId);
+    }
+
+    async updateBlogById(blogId: string, blogData: IBlogBody): Promise<IBlog | null> {
+        const sanitizedBlog: Partial<IBlog> = {
+
+            title: blogData.title.trim(),
+            brief: blogData.brief.trim(),
+            content: blogData.content.trim(),
+            imageUrl: blogData.image,
+            tags: blogData.tags || ["technology", "programming"],
+        };
+
+        try {
+            const updatedBlog = await Blogs.findByIdAndUpdate(
+                blogId,
+                { $set: sanitizedBlog },
+                { new: true, runValidators: true }
+            );
+
+            return updatedBlog;
+
+        } catch (error) {
+            console.error(`Failed to update blog with ID ${blogId}:`, error);
+            throw new Error("Blog update failed");
+        }
+    }
+
+    async deleteBlogById(blogId: string): Promise<boolean> {
+        try {
+            const result = await Blogs.deleteOne({ _id: blogId });
+            return result.deletedCount > 0; 
+        } catch (error) {
+            console.error('Error deleting blog:', error);
+            return false;
+        }
+    }
+
 
 }

@@ -22,6 +22,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
+        
         folder: "images_blog-image",
         format: async () => 'png',  // Change 'formate' to 'format'
         public_id: (req:Request, file:any) => file.originalname.split('.')[0],

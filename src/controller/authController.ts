@@ -92,7 +92,6 @@ export class AuthController {
             const image = req.file?.path;
             const data = await this.interactor.createBlog({ title, brief, content, userId, image });
 
-
             res.status(201).json({
                 success: true,
                 message: 'Blog created successfully',
@@ -101,21 +100,62 @@ export class AuthController {
 
         } catch (error) {
             console.log(error);
+            res.status(400).json(error);
             next(error);
 
         }
     }
 
     async getBlogs(req: Request, res: Response, next: NextFunction) {
-        console.log('here');
-        
+
         try {
             const blogs = await this.interactor.getBlogs();
-            console.log(blogs);
             res.status(200).json({ success: true, blogs })
         } catch (error) {
             console.log(error);
             next(error);
+        }
+    }
+    async getBlogDetails(req: Request, res: Response, next: NextFunction) {
+        const blogId = req.query?.blogId as string;
+
+        try {
+            if (!blogId) throw new Error('No blogId provided');
+            const blog = await this.interactor.getBlogDetails(blogId);
+            res.status(200).json({ success: true, blog });
+        } catch (error) {
+            console.log(error);
+            next(error);
+        }
+
+    }
+
+    async updateBlog(req: Request, res: Response, next: NextFunction) {
+        try {
+            const blogId = req.query.blogId as string;
+            const { title, brief, content } = req.body;
+            const image = req.file?.path;
+            console.log("re", image, blogId);
+
+            const blog = await this.interactor.editBlog(blogId, { title, brief, content, image });
+            res.status(200).json({ success: true, blog })
+        } catch (error) {
+            console.log(error);
+            next(error)
+
+        }
+    }
+
+    async deleteBlog(req: Request, res: Response, next: NextFunction) {
+        try {
+            console.log('herte');
+            const blogId = req.query.blogId as string;
+            const userId = req.userId as string;
+            const data = await this.interactor.deleteBlog(blogId, userId);
+            res.status(201).json({ success: true });
+        } catch (error) {
+            console.log(error);
+            next(error)
         }
     }
 }
