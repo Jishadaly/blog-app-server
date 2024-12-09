@@ -2,11 +2,12 @@ import mongoose, { model, Schema } from "mongoose";
 
 export interface IBlog extends Document {
     title: string;
-    content: string;
-    author: mongoose.Types.ObjectId;
+    content?: string;
+    author?: mongoose.Types.ObjectId;
     tags?: string[];
-    likes: number;
-    isPublished: boolean;
+    likes?: number;
+    isPublished?: boolean;
+    imageUrl?:string;
 }
 
 const blogSchema = new Schema<IBlog>(
@@ -30,6 +31,10 @@ const blogSchema = new Schema<IBlog>(
         likes: {
             type: Number,
             default: 0,
+        },
+        imageUrl :{
+            type : String,
+            
         },
         isPublished: {
             type: Boolean,
