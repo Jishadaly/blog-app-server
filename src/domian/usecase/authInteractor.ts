@@ -4,7 +4,7 @@ import { AuthRepositoryInterface } from "../interfaces/repositories/authInterfas
 import { IUser } from "../entities/types/User";
 import { Encrypt } from "../helper/hashPassword";
 import { otpGeneratorFun } from "../utils/otpGenerator";
-import { generateOtpEmailContent } from "../../utils/mailerContentGen";
+import { generateOtpEmailContent, generateResendOtpEmailContent } from "../../utils/mailerContentGen";
 import sendMail from "../helper/sendMail";
 import { generateToken } from "../helper/jwtHelper";
 
@@ -25,7 +25,9 @@ export class AthInteractorImpl implements AuthInterface {
                 const otp = otpGeneratorFun();
                 console.log("OTP : " ,otp);
                 
-                await this.Repository.saveOtp(savedUser.email, otp);
+               const Savedotp =  await this.Repository.saveOtp(savedUser.email, otp);
+               console.log('savedOTP',Savedotp , savedUser.email);
+               
                 const emailContent =  generateOtpEmailContent(savedUser.userName, otp);
                 sendMail(savedUser.email, emailContent);
              } else {
@@ -43,6 +45,11 @@ export class AthInteractorImpl implements AuthInterface {
         
         try {
             const otpRecord = await this.Repository.getStoredOtp(data.email)
+
+            console.log(otpRecord , data.email);
+            console.log(data.otp);
+
+            
         
         if (!otpRecord || otpRecord.otp !== data.otp) {
             throw Error("Invalid OTP");
@@ -86,9 +93,50 @@ export class AthInteractorImpl implements AuthInterface {
                 
             }
             const accessToken = token
-            return { accessToken };
+            return { accessToken , user };
         } catch (error: any) {
             throw error
+        }
+    }
+
+     async resendOtp (email: string) {
+        try {
+            const user =  await this.Repository.getUserbyEMail(email);
+            if (!user) {
+                throw Error( "User not found" );
+             }
+             const otp = otpGeneratorFun();
+             console.log("RESENT OTP", otp);
+             await this.Repository.updateOtp(email , otp);
+             const emailContent = generateResendOtpEmailContent(user.userName, otp);
+             await sendMail(user.email, emailContent);
+             return user
+        } catch (error) {
+            throw error
+        }
+    }
+
+
+    async googleAuth (userData: IUser)  {
+
+        try {
+            const savedUser = await this.Repository.saveGoogleUser(userData);
+            if (savedUser) {
+                const user = {
+                    id: savedUser._id,
+                    name: savedUser.userName,
+                    email: savedUser.email,
+                    phone: savedUser.phone,
+                }
+                
+                let token = generateToken(savedUser.id, savedUser.email);
+                console.log('google auth tocken',token);
+                
+                return { user, token };
+            }
+        } catch (error: any) {
+            console.error(`Error: ${error.message}`);
+            throw error;
         }
     }
 }

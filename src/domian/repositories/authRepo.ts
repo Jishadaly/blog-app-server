@@ -3,10 +3,13 @@ import { AuthRepositoryInterface } from "../interfaces/repositories/authInterfas
 import { IUser } from "../entities/types/User";
 import { Users } from "../../framework/dbModel/user";
 import OTP from "../../framework/dbModel/otp";
+import { Encrypt } from "../helper/hashPassword";
 
 
 //implement repo code;
 export class AuthRepositoryImpl implements AuthRepositoryInterface {
+
+    
 
     async createUser(userData: IUser, hashedPassword: string): Promise<any | null> {
         console.log('repo data ', userData, hashedPassword);
@@ -17,7 +20,8 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
             }
             const existingUser = await this.checkExistingUser(userData.email, userData.name);
             const existingUserName = await this.checkExistingName(userData.name);
-
+            console.log(existingUserName);
+            
             if (existingUserName) {
                 if (existingUserName.verified === false) {
                     return existingUserName
@@ -35,7 +39,6 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
                 userName: userData.name,
                 email: userData.email,
                 password: hashedPassword,
-                phone: userData.phone,
             });
             return await newUser.save();
 
@@ -82,6 +85,35 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
 
       async getUserbyEMail  (email: string): Promise<any | null > {
         return await Users.findOne({ email: email })
+      }
+
+      async updateOtp (email: string, otp: string)  {
+        return await OTP.findOneAndUpdate({ email }, { otp, createdAt: new Date() }, { upsert: true });
+      }
+
+      async saveGoogleUser  (userData: IUser)  {
+
+        if (!userData.name || !userData.email) {
+          throw new Error("data is undefined")
+        }
+      
+        const existingUser = await this.checkExistingUser(userData.name, userData.name);
+        if (existingUser) {
+          return existingUser
+        }
+      
+        const generatedPss = Math.random().toString(36).slice(-8);
+        const hashedPassword = await Encrypt.cryptPassword(generatedPss)
+      
+        const newUser = new Users({
+          userName: userData.name,
+          email: userData.email,
+          password: hashedPassword,
+          phone: userData.phone,
+          isGoogleUser: true
+        });
+      
+        return await newUser.save();
       }
 
 

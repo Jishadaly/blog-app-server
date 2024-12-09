@@ -7,6 +7,7 @@ export interface IUser extends Document {
     profilePic?: string;
     isGoogleUser: boolean;
     bio?: string;
+    verified?:boolean
 }
 
 const userSchema = new Schema<IUser>(
@@ -37,6 +38,12 @@ const userSchema = new Schema<IUser>(
             type: String,
             maxlength: 500,
         },
+        verified : {
+            type:Boolean,
+            require:true,
+            default:false
+        },
+        
     },
     { timestamps: true }
 );

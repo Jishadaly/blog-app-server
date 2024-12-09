@@ -7,4 +7,6 @@ export interface AuthRepositoryInterface {
     deleteAllOtp(email: string): Promise<any | null>
     verifyUserdb(email: string): Promise<any | null>
     getUserbyEMail(email: string): Promise<any | null>
+    updateOtp(email: string , otp:string): Promise<any | null>
+    saveGoogleUser(userData:IUser): Promise<any | null>
 };
