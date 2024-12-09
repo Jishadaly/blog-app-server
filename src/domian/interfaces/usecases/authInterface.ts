@@ -8,5 +8,6 @@ export interface AuthInterface {
     loginUser(email: string, password: string): Promise<any>
     resendOtp(email: string): Promise<any>
     googleAuth(userData: IUser): Promise<any>
-    createBlog(blogData:IBlogBody) : Promise<any>
+    createBlog(blogData: IBlogBody): Promise<any>
+    getBlogs(): Promise<IBlog[] | null>
 }

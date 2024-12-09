@@ -19,5 +19,6 @@ authRouter.get('/resendOtp',controller.resendOtp.bind(controller));
 authRouter.post('/googleLogin',controller.googleAuth.bind(controller))
 
 authRouter.post('/createBlog', protect, parser.single("image"),controller.createBlog.bind(controller));
+authRouter.get('/getBlogs',protect,controller.getBlogs.bind(controller));
 
 export default authRouter;

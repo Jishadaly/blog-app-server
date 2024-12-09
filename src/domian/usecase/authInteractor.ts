@@ -8,6 +8,7 @@ import { generateOtpEmailContent, generateResendOtpEmailContent } from "../../ut
 import sendMail from "../helper/sendMail";
 import { generateToken } from "../helper/jwtHelper";
 import { IBlog } from "../entities/types/IBlog";
+import { IBlog as IBlogDb } from "../../framework/dbModel/blog";
 
 export class AthInteractorImpl implements AuthInterface {
 
@@ -200,4 +201,13 @@ export class AthInteractorImpl implements AuthInterface {
             throw new Error('Blog creation failed: Unknown error');
         }
     }
+
+    async getBlogs(): Promise<IBlogDb[] | null> {
+        try {
+            return await this.Repository.getStoredBlogs();
+        } catch (error) {
+            throw new Error('Blog fetching failed: Unknown error');
+        }
+    }
+  
 }

@@ -11,8 +11,6 @@ import mongoose from "mongoose";
 //implement repo code;
 export class AuthRepositoryImpl implements AuthRepositoryInterface {
 
-
-
     async createUser(userData: IUser, hashedPassword: string): Promise<any | null> {
         console.log('repo data ', userData, hashedPassword);
 
@@ -120,24 +118,21 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
 
     async createBlog(blogData: IBlogBody): Promise<any> {
         try {
-
-           
-            
             if (!blogData.title || !blogData.content || !blogData.userId) {
                 throw new Error('Missing required fields: title, content, or author');
             }
 
-            
+
             const sanitizedBlog: IBlogBody = {
                 title: this.sanitizeText(blogData.title),
                 content: this.sanitizeText(blogData.content),
                 author: blogData.userId,
                 tags: blogData.tags?.map(tag => this.sanitizeText(tag)),
                 imageUrl: blogData.imageUrl,
-                isPublished:blogData.isPublished ?? false
+                isPublished: blogData.isPublished ?? false
             };
 
-            
+
             const newBlog = await Blogs.create(sanitizedBlog);
             const populatedBlog = await newBlog.populate('author', 'name email');
 
@@ -160,6 +155,10 @@ export class AuthRepositoryImpl implements AuthRepositoryInterface {
 
     async findBlogByTitle(title: string): Promise<IBlog | null> {
         return await Blogs.findOne({ title });
+    }
+
+    async getStoredBlogs(): Promise<IBlog[] | null> {
+        return await Blogs.find().sort({ createdAt: -1 });
     }
 
 }

@@ -13,4 +13,5 @@ export interface AuthRepositoryInterface {
     saveGoogleUser(userData:IUser): Promise<any | null>
     findBlogByTitle(title:string) : Promise<IBlog| null>
     createBlog(blog:IBlogBody): Promise<any| null>
+    getStoredBlogs():Promise<IBlog[] | null>
 };

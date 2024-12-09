@@ -101,8 +101,21 @@ export class AuthController {
 
         } catch (error) {
             console.log(error);
-            next(error)
+            next(error);
 
+        }
+    }
+
+    async getBlogs(req: Request, res: Response, next: NextFunction) {
+        console.log('here');
+        
+        try {
+            const blogs = await this.interactor.getBlogs();
+            console.log(blogs);
+            res.status(200).json({ success: true, blogs })
+        } catch (error) {
+            console.log(error);
+            next(error);
         }
     }
 }
