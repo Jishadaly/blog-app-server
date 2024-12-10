@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import { AuthInterface } from "../domian/interfaces/usecases/authInterface";
 import { AuthenticatedRequest } from "../framework/Middlewares/authMiddleware";
-import { IBlog } from "../domian/entities/types/IBlog";
 
 declare module 'express-serve-static-core' {
     interface Request {
@@ -155,7 +154,7 @@ export class AuthController {
             res.status(201).json({ success: true });
         } catch (error) {
             console.log(error);
-            next(error)
+            next(error);
         }
     }
 }
