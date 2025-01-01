@@ -13,4 +13,4 @@ export interface AuthInterface {
     getBlogDetails(blogId: string): Promise<IBlog | null>
     editBlog(blogId: string , blogData:IBlogBody): Promise<IBlog | null>
     deleteBlog(blogId:string , userId:string):Promise<boolean | null>
-}r
+}
